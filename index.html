@@ -1,33 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3713759006099394"
-     crossorigin="anonymous"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; padding: 0; }
-        header, footer { background-color: #f1f1f1; padding: 10px; text-align: center; }
-        nav a { margin: 0 10px; text-decoration: none; color: #333; }
-    </style>
+  <title>Bus Finder - GeneralBusStand</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    input, select { padding: 8px; margin: 10px 0; width: 300px; }
+    .card { border: 1px solid #ccc; border-radius: 10px; padding: 15px; margin: 10px 0; }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Bus Stand Info</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="contact.html">Contact</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="terms.html">Terms</a>
-            <a href="disclaimer.html">Disclaimer</a>
-        </nav>
-    </header>
-    <main>
-        <h2>Welcome to the Bus Stand Info Website</h2><p>This website provides updated information about major bus stands in Pakistan.</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 Bus Stand Information</p>
-    </footer>
+  <h2>Find a Bus</h2>
+  <input type="text" id="searchInput" placeholder="Search by city, company or stop...">
+  <div id="busList"></div>
+
+  <script>
+    const supabase = supabase.createClient(
+      'https://lkhhlpngexntgmzxafxn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0'
+    );
+
+    async function fetchBuses() {
+      const { data, error } = await supabase.from('buses').select('*');
+      if (error) {
+        alert('Error fetching buses');
+        return;
+      }
+      displayBuses(data);
+
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        const filtered = data.filter(b =>
+          b.from_city.toLowerCase().includes(q) ||
+          b.to_city.toLowerCase().includes(q) ||
+          b.company.toLowerCase().includes(q) ||
+          (b.stops && b.stops.toLowerCase().includes(q))
+        );
+        displayBuses(filtered);
+      });
+    }
+
+    function displayBuses(buses) {
+      const list = document.getElementById('busList');
+      list.innerHTML = '';
+      buses.forEach(b => {
+        list.innerHTML += `
+          <div class="card">
+            <h3>${b.from_city} → ${b.to_city}</h3>
+            <p><strong>Time:</strong> ${b.time}</p>
+            <p><strong>Distance:</strong> ${b.distance} km</p>
+            <p><strong>Company:</strong> ${b.company}</p>
+            <p><strong>Fare:</strong> Rs. ${b.fare}</p>
+            <p><strong>Stops:</strong> ${b.stops || 'N/A'}</p>
+          </div>
+        `;
+      });
+    }
+
+    fetchBuses();
+  </script>
 </body>
 </html>
