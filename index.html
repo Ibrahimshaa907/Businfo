@@ -1,63 +1,36 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Bus Finder - GeneralBusStand</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: Arial; margin: 20px; }
-    input, select { padding: 8px; margin: 10px 0; width: 300px; }
-    .card { border: 1px solid #ccc; border-radius: 10px; padding: 15px; margin: 10px 0; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General Bus Stand</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <h2>Find a Bus</h2>
-  <input type="text" id="searchInput" placeholder="Search by city, company or stop...">
-  <div id="busList"></div>
+  <header>
+    <h1 id="title">Find a Bus | بس تلاش کریں</h1>
+    <div class="lang-toggle">
+      <button onclick="setLanguage('en')">English</button>
+      <button onclick="setLanguage('ur')">اردو</button>
+    </div>
+  </header>
 
-  <script>
-    const supabase = supabase.createClient(
-      'https://lkhhlpngexntgmzxafxn.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0'
-    );
+  <main>
+    <input type="text" id="search" placeholder="Search by city, company or stop... / شہر، کمپنی یا اسٹاپ تلاش کریں" />
+    <div id="bus-list"></div>
+  </main>
 
-    async function fetchBuses() {
-      const { data, error } = await supabase.from('buses').select('*');
-      if (error) {
-        alert('Error fetching buses');
-        return;
-      }
-      displayBuses(data);
-
-      document.getElementById('searchInput').addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase();
-        const filtered = data.filter(b =>
-          b.from_city.toLowerCase().includes(q) ||
-          b.to_city.toLowerCase().includes(q) ||
-          b.company.toLowerCase().includes(q) ||
-          (b.stops && b.stops.toLowerCase().includes(q))
-        );
-        displayBuses(filtered);
-      });
-    }
-
-    function displayBuses(buses) {
-      const list = document.getElementById('busList');
-      list.innerHTML = '';
-      buses.forEach(b => {
-        list.innerHTML += `
-          <div class="card">
-            <h3>${b.from_city} → ${b.to_city}</h3>
-            <p><strong>Time:</strong> ${b.time}</p>
-            <p><strong>Distance:</strong> ${b.distance} km</p>
-            <p><strong>Company:</strong> ${b.company}</p>
-            <p><strong>Fare:</strong> Rs. ${b.fare}</p>
-            <p><strong>Stops:</strong> ${b.stops || 'N/A'}</p>
-          </div>
-        `;
-      });
-    }
-
-    fetchBuses();
-  </script>
+  <footer>
+    <nav>
+      <a href="about.html">About Us</a> |
+      <a href="contact.html">Contact</a> |
+      <a href="privacy.html">Privacy</a> |
+      <a href="terms.html">Terms</a> |
+      <a href="admin.html">Admin Panel</a>
+    </nav>
+    <p>&copy; 2025 GeneralBusStand</p>
+  </footer>
 </body>
 </html>
