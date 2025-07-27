@@ -3,104 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bus Finder | General Bus Stand</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-    h2 { margin-bottom: 10px; }
-    label { display: block; margin-top: 10px; }
-    input { padding: 6px; margin-right: 10px; width: 200px; }
-    button { padding: 8px 16px; cursor: pointer; margin-top: 10px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #eee; }
-    #admin-link { margin-top: 20px; display: inline-block; }
-  </style>
+  <title>General Bus Stand</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <h2>🚌 بس تلاش کریں / Find a Bus</h2>
-
-  <label>🔍 روانگی شہر / From City:
-    <input type="text" id="fromCity" placeholder="مثلاً Multan or Lahore" />
-  </label>
-
-  <label>🎯 منزل شہر / To City:
-    <input type="text" id="toCity" placeholder="مثلاً Karachi or Faisalabad" />
-  </label>
-
-  <button onclick="searchBuses()">🔍 Search</button>
-
-  <table id="resultsTable" style="display:none;">
-    <thead>
-      <tr>
-        <th>From روانگی</th>
-        <th>To منزل</th>
-        <th>Time وقت</th>
-        <th>Distance فاصلہ</th>
-        <th>Company کمپنی</th>
-        <th>Fare کرایہ</th>
-        <th>Stops اسٹاپس</th>
-        <th>Mobile نمبر</th>
-      </tr>
-    </thead>
-    <tbody id="resultsBody"></tbody>
-  </table>
-
-  <a href="/admin.html" id="admin-link">➕ Admin Panel</a>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
-    const SUPABASE_URL = "https://lkhhlpngexntgmzxafxn.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function searchBuses() {
-      const fromCity = document.getElementById("fromCity").value.trim().toLowerCase();
-      const toCity = document.getElementById("toCity").value.trim().toLowerCase();
-
-      const { data: buses, error } = await supabase.from("Buses").select("*");
-
-      if (error) {
-        alert("❌ Error fetching buses: " + error.message);
-        return;
-      }
-
-      const filtered = buses.filter(bus =>
-        bus.From_city?.toLowerCase().includes(fromCity) &&
-        bus.To_city?.toLowerCase().includes(toCity)
-      );
-
-      displayResults(filtered);
-    }
-
-    function displayResults(buses) {
-      const table = document.getElementById("resultsTable");
-      const body = document.getElementById("resultsBody");
-      body.innerHTML = "";
-
-      if (buses.length === 0) {
-        table.style.display = "none";
-        alert("😕 No buses found for your search.");
-        return;
-      }
-
-      buses.forEach(bus => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${bus.From_city || 'N/A'}</td>
-          <td>${bus.To_city || 'N/A'}</td>
-          <td>${bus.Time || 'N/A'}</td>
-          <td>${bus.Distance || 'N/A'}</td>
-          <td>${bus.Company || 'N/A'}</td>
-          <td>${bus.Fare || 'N/A'}</td>
-          <td>${bus.Stops || 'N/A'}</td>
-          <td>${bus.Mobile || 'N/A'}</td>
-        `;
-        body.appendChild(row);
-      });
-
-      table.style.display = "table";
-    }
-  </script>
+  <div class="container">
+    <h1>🚌 General Bus Stand</h1>
+    <div class="search-box">
+      <select id="fromCity">
+        <option value="">From City</option>
+      </select>
+      <select id="toCity">
+        <option value="">To City</option>
+      </select>
+      <button id="searchBtn">Search</button>
+    </div>
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>To</th>
+          <th>Time</th>
+          <th>Distance</th>
+          <th>Fare</th>
+          <th>Stops</th>
+          <th>Mobile</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
