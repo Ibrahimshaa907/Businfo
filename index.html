@@ -1,36 +1,90 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>General Bus Stand</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { text-align: center; }
+    input, select { margin: 5px; padding: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .filter-bar { display: flex; justify-content: center; flex-wrap: wrap; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1 id="title">Find a Bus | بس تلاش کریں</h1>
-    <div class="lang-toggle">
-      <button onclick="setLanguage('en')">English</button>
-      <button onclick="setLanguage('ur')">اردو</button>
-    </div>
-  </header>
+  <h1>General Bus Stand - Search Buses</h1>
+  <div class="filter-bar">
+    <input type="text" id="fromCity" placeholder="From City" />
+    <input type="text" id="toCity" placeholder="To City" />
+    <input type="text" id="company" placeholder="Company" />
+    <button onclick="fetchAndFilter()">Search</button>
+  </div>  <table>
+    <thead>
+      <tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Time</th>
+        <th>Distance</th>
+        <th>Company</th>
+        <th>Fare</th>
+        <th>Stops</th>
+        <th>Mobile</th>
+      </tr>
+    </thead>
+    <tbody id="busTable"></tbody>
+  </table>  <script>
+    const supabaseUrl = 'https://lkhhlpngexntgmzxafxn.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  <main>
-    <input type="text" id="search" placeholder="Search by city, company or stop... / شہر، کمپنی یا اسٹاپ تلاش کریں" />
-    <div id="bus-list"></div>
-  </main>
+    async function fetchAndFilter() {
+      const from = document.getElementById('fromCity').value.trim().toLowerCase();
+      const to = document.getElementById('toCity').value.trim().toLowerCase();
+      const company = document.getElementById('company').value.trim().toLowerCase();
 
-  <footer>
-    <nav>
-      <a href="about.html">About Us</a> |
-      <a href="contact.html">Contact</a> |
-      <a href="privacy.html">Privacy</a> |
-      <a href="terms.html">Terms</a> |
-      <a href="admin.html">Admin Panel</a>
-    </nav>
-    <p>&copy; 2025 GeneralBusStand</p>
-  </footer>
-</body>
+      let { data: buses, error } = await supabase
+        .from('Buses')
+        .select('*');
+
+      if (error) {
+        alert('Error fetching data');
+        return;
+      }
+
+      const filtered = buses.filter(bus => {
+        return (
+          (from === '' || bus.From_city.toLowerCase().includes(from)) &&
+          (to === '' || bus.To_city.toLowerCase().includes(to)) &&
+          (company === '' || bus.Comapny.toLowerCase().includes(company))
+        );
+      });
+
+      displayData(filtered);
+    }
+
+    function displayData(data) {
+      const tbody = document.getElementById('busTable');
+      tbody.innerHTML = '';
+      data.forEach(bus => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${bus.From_city}</td>
+            <td>${bus.To_city}</td>
+            <td>${bus.Time}</td>
+            <td>${bus.Distance}</td>
+            <td>${bus.Comapny}</td>
+            <td>${bus.Fare}</td>
+            <td>${bus.Stops}</td>
+            <td>${bus.Mobile}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Initial fetch
+    fetchAndFilter();
+  </script></body>
 </html>
