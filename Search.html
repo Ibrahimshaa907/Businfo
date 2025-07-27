@@ -1,1 +1,68 @@
-abc
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Buses</title>
+</head>
+<body>
+  <h2>Search Buses</h2>
+  <input id="from" placeholder="From City">
+  <input id="to" placeholder="To City">
+  <button onclick="search()">Search</button>
+  <div id="results"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.firebaseio.com",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.firebasestorage.app",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    async function search() {
+      const from = document.getElementById('from').value.toLowerCase();
+      const to = document.getElementById('to').value.toLowerCase();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "Searching...";
+
+      try {
+        const snapshot = await get(child(ref(db), 'buses'));
+        if (snapshot.exists()) {
+          const buses = snapshot.val();
+          let html = '';
+          for (let key in buses) {
+            const bus = buses[key];
+            if (
+              bus.From_city.toLowerCase() === from &&
+              bus.To_city.toLowerCase() === to
+            ) {
+              html += `
+                <div>
+                  <strong>${bus.Company}</strong><br>
+                  Time: ${bus.Time} | Fare: Rs.${bus.Fare}<br>
+                  Distance: ${bus.Distance} | Stops: ${bus.Stops}<br>
+                  Contact: ${bus.Mobile}
+                  <hr>
+                </div>`;
+            }
+          }
+          resultsDiv.innerHTML = html || "No matching buses found.";
+        } else {
+          resultsDiv.innerHTML = "No buses available.";
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = "Error fetching data: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
