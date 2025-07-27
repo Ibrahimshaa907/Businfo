@@ -1,31 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bus Finder - General Bus Stand</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Search - General Bus Stand</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
       margin: 0;
       padding: 20px;
+      background-color: #f4f4f4;
     }
     h1 {
       text-align: center;
+      color: #333;
     }
     .search-bar {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
       justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
     }
     input {
       padding: 10px;
       font-size: 1rem;
-      border-radius: 5px;
+      width: 200px;
       border: 1px solid #ccc;
+      border-radius: 5px;
     }
     table {
       width: 100%;
@@ -33,38 +34,36 @@
       background-color: white;
     }
     th, td {
+      border: 1px solid #ccc;
       padding: 10px;
-      border: 1px solid #ddd;
       text-align: left;
     }
     th {
-      background-color: #0077cc;
+      background-color: #007BFF;
       color: white;
     }
-    footer {
+    .footer {
       text-align: center;
       margin-top: 30px;
-      font-size: 0.9rem;
-      color: #777;
     }
-    a {
+    .footer a {
       margin: 0 10px;
-      color: #0077cc;
+      color: #007BFF;
       text-decoration: none;
+    }
+    .error {
+      color: red;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-
-  <h1>🚌 General Bus Stand - Bus Search</h1>
-
+  <h1>🚌 General Bus Stand - Search Buses</h1>
   <div class="search-bar">
-    <input type="text" id="fromInput" placeholder="From City (مثلاً لاہور)" />
-    <input type="text" id="toInput" placeholder="To City (مثلاً ملتان)" />
-    <input type="text" id="companyInput" placeholder="Company Name" />
-  </div>
-
-  <table>
+    <input type="text" id="fromInput" placeholder="From City">
+    <input type="text" id="toInput" placeholder="To City">
+    <input type="text" id="companyInput" placeholder="Company">
+  </div>  <div class="error" id="errorBox"></div>  <table>
     <thead>
       <tr>
         <th>From</th>
@@ -78,17 +77,13 @@
       </tr>
     </thead>
     <tbody id="resultsBody"></tbody>
-  </table>
-
-  <footer>
-    <a href="/about.html">About Us</a>
-    <a href="/contact.html">Contact</a>
+  </table>  <div class="footer">
+    <a href="/about.html">About</a>
     <a href="/privacy.html">Privacy</a>
+    <a href="/contact.html">Contact</a>
     <a href="/terms.html">Terms</a>
     <a href="/admin.html">Admin Panel</a>
-  </footer>
-
-  <script type="module">
+  </div>  <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://lkhhlpngexntgmzxafxn.supabase.co';
@@ -97,55 +92,57 @@
 
     let allData = [];
 
-    async function fetchBuses() {
+    async function fetchData() {
       const { data, error } = await supabase.from('Buses').select('*');
+      const errorBox = document.getElementById('errorBox');
+
       if (error) {
-        console.error('Error fetching buses:', error.message);
+        errorBox.textContent = 'Failed to fetch data from Supabase: ' + error.message;
         return;
       }
+
       allData = data;
-      renderTable(data);
+      filterData();
+    }
+
+    function filterData() {
+      const from = document.getElementById('fromInput').value.toLowerCase();
+      const to = document.getElementById('toInput').value.toLowerCase();
+      const company = document.getElementById('companyInput').value.toLowerCase();
+
+      const filtered = allData.filter(row =>
+        row.From_city?.toLowerCase().includes(from) &&
+        row.To_city?.toLowerCase().includes(to) &&
+        row.Company?.toLowerCase().includes(company)
+      );
+
+      renderTable(filtered);
     }
 
     function renderTable(data) {
       const tbody = document.getElementById('resultsBody');
       tbody.innerHTML = '';
+
       data.forEach(bus => {
-        const row = `
+        tbody.innerHTML += `
           <tr>
             <td>${bus.From_city}</td>
             <td>${bus.To_city}</td>
             <td>${bus.Time}</td>
             <td>${bus.Distance}</td>
-            <td>${bus.Comapny}</td>
+            <td>${bus.Company}</td>
             <td>${bus.Fare}</td>
             <td>${bus.Stops}</td>
             <td>${bus.Mobile}</td>
           </tr>
         `;
-        tbody.innerHTML += row;
       });
     }
 
-    function filterBuses() {
-      const from = document.getElementById('fromInput').value.toLowerCase();
-      const to = document.getElementById('toInput').value.toLowerCase();
-      const company = document.getElementById('companyInput').value.toLowerCase();
+    document.getElementById('fromInput').addEventListener('input', filterData);
+    document.getElementById('toInput').addEventListener('input', filterData);
+    document.getElementById('companyInput').addEventListener('input', filterData);
 
-      const filtered = allData.filter(bus =>
-        bus.From_city.toLowerCase().includes(from) &&
-        bus.To_city.toLowerCase().includes(to) &&
-        bus.Comapny.toLowerCase().includes(company)
-      );
-      renderTable(filtered);
-    }
-
-    document.getElementById('fromInput').addEventListener('input', filterBuses);
-    document.getElementById('toInput').addEventListener('input', filterBuses);
-    document.getElementById('companyInput').addEventListener('input', filterBuses);
-
-    fetchBuses();
-  </script>
-
-</body>
+    fetchData();
+  </script></body>
 </html>
