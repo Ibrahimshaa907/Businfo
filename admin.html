@@ -1,47 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Add Bus - Admin Panel</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: Arial; margin: 20px; }
-    input, textarea { display: block; margin: 10px 0; padding: 8px; width: 300px; }
-    button { padding: 10px 20px; margin-top: 10px; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Admin - Add Bus</title>
 </head>
 <body>
   <h2>Add New Bus</h2>
   <form id="busForm">
-    <input type="text" name="from_city" placeholder="From City" required />
-    <input type="text" name="to_city" placeholder="To City" required />
-    <input type="text" name="time" placeholder="Time (e.g. 8:00 AM)" required />
-    <input type="number" name="distance" placeholder="Distance (km)" required />
-    <input type="text" name="company" placeholder="Company Name" required />
-    <input type="number" name="fare" placeholder="Fare (PKR)" required />
-    <textarea name="stops" placeholder="Stops (comma separated e.g. Sahiwal, Okara, Faisalabad)"></textarea>
-    <button type="submit">Add Bus</button>
+    <input name="From_city" placeholder="From City" required><br>
+    <input name="To_city" placeholder="To City" required><br>
+    <input name="Time" placeholder="Time" required><br>
+    <input name="Distance" placeholder="Distance" required><br>
+    <input name="Company" placeholder="Company" required><br>
+    <input name="Fare" placeholder="Fare" required><br>
+    <input name="Stops" placeholder="Stops" required><br>
+    <input name="Mobile" placeholder="Mobile" required><br>
+    <button type="submit">Submit</button>
   </form>
 
-  <script>
-    const supabase = supabase.createClient(
-      'https://lkhhlpngexntgmzxafxn.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0'
-    );
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-    const form = document.getElementById('busForm');
-    form.addEventListener('submit', async (e) => {
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.firebaseio.com",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.firebasestorage.app",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById('busForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = new FormData(form);
-      const bus = Object.fromEntries(formData);
-      bus.distance = parseInt(bus.distance);
-      bus.fare = parseInt(bus.fare);
-
-      const { error } = await supabase.from('buses').insert([bus]);
-      if (error) {
-        alert('Error adding bus: ' + error.message);
-      } else {
-        alert('Bus added successfully!');
+      const form = e.target;
+      const bus = {
+        From_city: form.From_city.value,
+        To_city: form.To_city.value,
+        Time: form.Time.value,
+        Distance: form.Distance.value,
+        Company: form.Company.value,
+        Fare: form.Fare.value,
+        Stops: form.Stops.value,
+        Mobile: form.Mobile.value
+      };
+      try {
+        await push(ref(db, 'buses'), bus);
+        alert('Bus data added successfully!');
         form.reset();
+      } catch (error) {
+        alert('Error: ' + error.message);
       }
     });
   </script>
