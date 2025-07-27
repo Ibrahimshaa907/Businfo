@@ -1,53 +1,87 @@
+const supabaseUrl = 'https://lkhhlpngexntgmzxafxn.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0';
 
-const API_URL = "https://lkhhlpngexntgmzxafxn.supabase.co/rest/v1/Buses";
-const API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-const headers = {
-  apikey: API_KEY,
-  Authorization: `Bearer ${API_KEY}`,
+async function loadCities() {
+  const { data, error } = await client.from('Buses').select('From_city, To_city');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const fromSet = new Set();
+  const toSet = new Set();
+
+  data.forEach(row => {
+    fromSet.add(row.From_city);
+    toSet.add(row.To_city);
+  });
+
+  const fromCitySelect = document.getElementById('fromCity');
+  const toCitySelect = document.getElementById('toCity');
+
+  fromSet.forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city;
+    opt.text = city;
+    fromCitySelect.add(opt);
+  });
+
+  toSet.forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city;
+    opt.text = city;
+    toCitySelect.add(opt);
+  });
+}
+
+async function searchBuses() {
+  const fromCity = document.getElementById('fromCity').value;
+  const toCity = document.getElementById('toCity').value;
+
+  const { data, error } = await client
+    .from('Buses')
+    .select('*')
+    .eq('From_city', fromCity)
+    .eq('To_city', toCity);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const tbody = document.querySelector('#resultsTable tbody');
+  tbody.innerHTML = '';
+
+  data.forEach(bus => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${bus.From_city}</td>
+      <td>${bus.To_city}</td>
+      <td>${bus.Time || '-'}</td>
+      <td>${bus.Distance || '-'}</td>
+      <td>${bus.Fare || '-'}</td>
+      <td>${bus.Stops || '-'}</td>
+      <td>${bus.Mobile || '-'}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+document.getElementById('searchBtn').addEventListener('click', searchBuses);
+
+document.addEventListener('DOMContentLoaded', loadCities);
+
+// Supabase client setup
+var supabase = window.supabase = {
+  createClient: function(url, key) {
+    return supabaseJs.createClient(url, key);
+  }
 };
 
-const busList = document.getElementById("bus-list");
-const searchInput = document.getElementById("search");
-
-async function fetchBuses() {
-  const res = await fetch(API_URL, { headers });
-  const buses = await res.json();
-  displayBuses(buses);
-}
-
-function displayBuses(buses) {
-  const query = searchInput.value.toLowerCase();
-  busList.innerHTML = "";
-  buses
-    .filter(bus =>
-      bus.From_city.toLowerCase().includes(query) ||
-      bus.To_city.toLowerCase().includes(query) ||
-      bus.Company.toLowerCase().includes(query) ||
-      bus.Stops.toLowerCase().includes(query)
-    )
-    .forEach(bus => {
-      const div = document.createElement("div");
-      div.className = "bus-item";
-      div.innerHTML = `
-        <strong>${bus.From_city} → ${bus.To_city}</strong><br>
-        🕒 ${bus.Time} | 🛣️ ${bus.Distance} KM | 🚌 ${bus.Company}<br>
-        💰 Rs.${bus.Fare} | 📱 ${bus.Mobile} | 🛑 Stops: ${bus.Stops}
-      `;
-      busList.appendChild(div);
-    });
-}
-
-searchInput.addEventListener("input", fetchBuses);
-fetchBuses();
-
-function setLanguage(lang) {
-  const title = document.getElementById("title");
-  if (lang === "ur") {
-    title.textContent = "بس تلاش کریں";
-    searchInput.placeholder = "شہر، کمپنی یا اسٹاپ تلاش کریں...";
-  } else {
-    title.textContent = "Find a Bus";
-    searchInput.placeholder = "Search by city, company or stop...";
-  }
-}
+// Include supabase-js script
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
+document.head.appendChild(script);
