@@ -1,148 +1,106 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bus Search - General Bus Stand</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bus Finder | General Bus Stand</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .search-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 10px;
-      font-size: 1rem;
-      width: 200px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #007BFF;
-      color: white;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .footer a {
-      margin: 0 10px;
-      color: #007BFF;
-      text-decoration: none;
-    }
-    .error {
-      color: red;
-      text-align: center;
-    }
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    h2 { margin-bottom: 10px; }
+    label { display: block; margin-top: 10px; }
+    input { padding: 6px; margin-right: 10px; width: 200px; }
+    button { padding: 8px 16px; cursor: pointer; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+    #admin-link { margin-top: 20px; display: inline-block; }
   </style>
 </head>
 <body>
-  <h1>🚌 General Bus Stand - Search Buses</h1>
-  <div class="search-bar">
-    <input type="text" id="fromInput" placeholder="From City">
-    <input type="text" id="toInput" placeholder="To City">
-    <input type="text" id="companyInput" placeholder="Company">
-  </div>  <div class="error" id="errorBox"></div>  <table>
+
+  <h2>🚌 بس تلاش کریں / Find a Bus</h2>
+
+  <label>🔍 روانگی شہر / From City:
+    <input type="text" id="fromCity" placeholder="مثلاً Multan or Lahore" />
+  </label>
+
+  <label>🎯 منزل شہر / To City:
+    <input type="text" id="toCity" placeholder="مثلاً Karachi or Faisalabad" />
+  </label>
+
+  <button onclick="searchBuses()">🔍 Search</button>
+
+  <table id="resultsTable" style="display:none;">
     <thead>
       <tr>
-        <th>From</th>
-        <th>To</th>
-        <th>Time</th>
-        <th>Distance</th>
-        <th>Company</th>
-        <th>Fare</th>
-        <th>Stops</th>
-        <th>Mobile</th>
+        <th>From روانگی</th>
+        <th>To منزل</th>
+        <th>Time وقت</th>
+        <th>Distance فاصلہ</th>
+        <th>Company کمپنی</th>
+        <th>Fare کرایہ</th>
+        <th>Stops اسٹاپس</th>
+        <th>Mobile نمبر</th>
       </tr>
     </thead>
     <tbody id="resultsBody"></tbody>
-  </table>  <div class="footer">
-    <a href="/about.html">About</a>
-    <a href="/privacy.html">Privacy</a>
-    <a href="/contact.html">Contact</a>
-    <a href="/terms.html">Terms</a>
-    <a href="/admin.html">Admin Panel</a>
-  </div>  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  </table>
 
-    const supabaseUrl = 'https://lkhhlpngexntgmzxafxn.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  <a href="/admin.html" id="admin-link">➕ Admin Panel</a>
 
-    let allData = [];
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = "https://lkhhlpngexntgmzxafxn.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxraGhscG5nZXhudGdtenhhZnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1NTYwOTIsImV4cCI6MjA2OTEzMjA5Mn0.viDGnEjR2-eKdwglSF5oqToJI2YPuxIpbR4bVTJ88X0";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function fetchData() {
-      const { data, error } = await supabase.from('Buses').select('*');
-      const errorBox = document.getElementById('errorBox');
+    async function searchBuses() {
+      const fromCity = document.getElementById("fromCity").value.trim().toLowerCase();
+      const toCity = document.getElementById("toCity").value.trim().toLowerCase();
+
+      const { data: buses, error } = await supabase.from("Buses").select("*");
 
       if (error) {
-        errorBox.textContent = 'Failed to fetch data from Supabase: ' + error.message;
+        alert("❌ Error fetching buses: " + error.message);
         return;
       }
 
-      allData = data;
-      filterData();
-    }
-
-    function filterData() {
-      const from = document.getElementById('fromInput').value.toLowerCase();
-      const to = document.getElementById('toInput').value.toLowerCase();
-      const company = document.getElementById('companyInput').value.toLowerCase();
-
-      const filtered = allData.filter(row =>
-        row.From_city?.toLowerCase().includes(from) &&
-        row.To_city?.toLowerCase().includes(to) &&
-        row.Company?.toLowerCase().includes(company)
+      const filtered = buses.filter(bus =>
+        bus.From_city?.toLowerCase().includes(fromCity) &&
+        bus.To_city?.toLowerCase().includes(toCity)
       );
 
-      renderTable(filtered);
+      displayResults(filtered);
     }
 
-    function renderTable(data) {
-      const tbody = document.getElementById('resultsBody');
-      tbody.innerHTML = '';
+    function displayResults(buses) {
+      const table = document.getElementById("resultsTable");
+      const body = document.getElementById("resultsBody");
+      body.innerHTML = "";
 
-      data.forEach(bus => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${bus.From_city}</td>
-            <td>${bus.To_city}</td>
-            <td>${bus.Time}</td>
-            <td>${bus.Distance}</td>
-            <td>${bus.Company}</td>
-            <td>${bus.Fare}</td>
-            <td>${bus.Stops}</td>
-            <td>${bus.Mobile}</td>
-          </tr>
+      if (buses.length === 0) {
+        table.style.display = "none";
+        alert("😕 No buses found for your search.");
+        return;
+      }
+
+      buses.forEach(bus => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${bus.From_city || 'N/A'}</td>
+          <td>${bus.To_city || 'N/A'}</td>
+          <td>${bus.Time || 'N/A'}</td>
+          <td>${bus.Distance || 'N/A'}</td>
+          <td>${bus.Company || 'N/A'}</td>
+          <td>${bus.Fare || 'N/A'}</td>
+          <td>${bus.Stops || 'N/A'}</td>
+          <td>${bus.Mobile || 'N/A'}</td>
         `;
+        body.appendChild(row);
       });
+
+      table.style.display = "table";
     }
-
-    document.getElementById('fromInput').addEventListener('input', filterData);
-    document.getElementById('toInput').addEventListener('input', filterData);
-    document.getElementById('companyInput').addEventListener('input', filterData);
-
-    fetchData();
-  </script></body>
+  </script>
+</body>
 </html>
