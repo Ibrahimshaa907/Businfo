@@ -1,124 +1,121 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bus Search</title>
+  <title>Search Buses</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
       padding: 20px;
+      background: #f7f9fb;
     }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    h2 {
+      color: #2c3e50;
     }
-    input[type="text"] {
-      width: 100%;
+    input, button, select {
       padding: 10px;
-      margin-bottom: 10px;
+      margin: 5px 0;
+      width: 100%;
+      max-width: 400px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    .autocomplete-items {
-      position: absolute;
-      border: 1px solid #d4d4d4;
-      border-bottom: none;
-      border-top: none;
-      z-index: 99;
-      top: 100%;
-      left: 0;
-      right: 0;
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 400px;
     }
-    .autocomplete-items div {
+    li {
+      background: #eaeaea;
       padding: 10px;
-      cursor: pointer;
-      background-color: #fff;
-      border-bottom: 1px solid #d4d4d4;
-    }
-    .autocomplete-items div:hover {
-      background-color: #e9e9e9;
+      margin: 5px 0;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Bus Search</h2>
-    <form autocomplete="off">
-      <div class="autocomplete">
-        <input id="fromCity" type="text" placeholder="From City" />
-      </div>
-      <div class="autocomplete">
-        <input id="toCity" type="text" placeholder="To City" />
-      </div>
-      <button type="submit">Search</button>
-    </form>
-  </div>  <script>
+  <h2>Search Buses</h2>
+
+  <form id="searchForm">
+    <input list="cities" id="fromCity" placeholder="From City" required />
+    <input list="cities" id="toCity" placeholder="To City" required />
+    <button type="submit">Search</button>
+  </form>
+
+  <datalist id="cities"></datalist>
+
+  <h3>Results:</h3>
+  <ul id="results"></ul>
+
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.appspot.com",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
     const cities = [
-      "Abbottabad", "Ahmadpur East", "Ahmed Nager Chatha", "Ali Khan Abad", "Alipur", "Arifwala", "Attock",
-      "Awaran", "Badin", "Bahawalnagar", "Bahawalpur", "Banda Daud Shah", "Bannu", "Barnala", "Batkhela", "Bhalwal",
-      "Bhakkar", "Bhera", "Bhimber", "Bhirkan", "Bhuawana", "Burewala", "Chak", "Chakwal", "Chaman", "Charsadda",
-      "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Dadu", "Daska", "Dera Bugti", "Dera Ghazi Khan",
-      "Dera Ismail Khan", "Dhaular", "Dina", "Dinga", "Dir", "Dipalpur", "Dokri", "Drosh", "Faisalabad",
-      "Fateh Jang", "Ghakhar Mandi", "Ghotki", "Gilgit", "Gojra", "Gujranwala", "Gujrat", "Gwadar", "Hafizabad",
-      "Hangu", "Haripur", "Harnai", "Hasilpur", "Haveli Lakha", "Hyderabad", "Islamabad", "Jacobabad",
-      "Jafarabad", "Jamshoro", "Jaranwala", "Jhang", "Jhelum", "Kabirwala", "Kaghan", "Kahna Nau",
-      "Kahror Pakka", "Karak", "Karachi", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab",
-      "Kohat", "Kot Adu", "Kotli", "Kot Radha Kishan", "Kotri", "Kundian", "Lahore", "Lakki Marwat",
-      "Lalamusa", "Larkana", "Lasbela", "Leiah", "Liaquat Pur", "Lodhran", "Loralai", "Malakand",
-      "Mandi Bahauddin", "Mansehra", "Mardan", "Mastung", "Matiari", "Mehar", "Mian Channu", "Mianwali",
-      "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Multan", "Murree", "Muzaffargarh", "Muzaffarabad",
-      "Nankana Sahib", "Nawabshah", "Nowshera", "Okara", "Pakpattan", "Panjgur", "Pattoki", "Peshawar",
-      "Quetta", "Rahim Yar Khan", "Rajanpur", "Rawalpindi", "Renala Khurd", "Rohri", "Sadiqabad",
-      "Sahiwal", "Sanghar", "Sargodha", "Shahdadkot", "Shahdadpur", "Shahkot", "Sheikhupura",
-      "Shikarpur", "Sialkot", "Sibi", "Sukkur", "Swabi", "Swat", "Tando Adam", "Tando Allahyar",
-      "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Turbat", "Umerkot",
-      "Vehari", "Wah Cantonment", "Wazirabad", "Zhob", "Ziarat"
+      "Abbottabad", "Attock", "Bahawalnagar", "Bahawalpur", "Bannu", "Chakwal", "Chiniot", "Dera Ghazi Khan", "Dera Ismail Khan",
+      "Faisalabad", "Gujranwala", "Gujrat", "Hyderabad", "Islamabad", "Jacobabad", "Jhang", "Jhelum", "Karachi", "Kasur",
+      "Khairpur", "Khuzdar", "Kohat", "Lahore", "Larkana", "Mandi Bahauddin", "Mianwali", "Mirpur Khas", "Multan", "Muzaffargarh",
+      "Muzaffarabad", "Nawabshah", "Nowshera", "Okara", "Peshawar", "Quetta", "Rahim Yar Khan", "Rawalpindi", "Sadiqabad",
+      "Sahiwal", "Sargodha", "Sheikhupura", "Sialkot", "Sukkur", "Swat", "Thatta", "Vehari", "Zhob"
     ];
 
-    function autocomplete(input, array) {
-      let currentFocus;
-      input.addEventListener("input", function () {
-        let list, item, i, val = this.value;
-        closeAllLists();
-        if (!val) return false;
-        currentFocus = -1;
-        list = document.createElement("DIV");
-        list.setAttribute("class", "autocomplete-items");
-        this.parentNode.appendChild(list);
-        for (i = 0; i < array.length; i++) {
-          if (array[i].toLowerCase().startsWith(val.toLowerCase())) {
-            item = document.createElement("DIV");
-            item.innerHTML = "<strong>" + array[i].substr(0, val.length) + "</strong>";
-            item.innerHTML += array[i].substr(val.length);
-            item.addEventListener("click", function () {
-              input.value = this.textContent;
-              closeAllLists();
-            });
-            list.appendChild(item);
+    // Populate datalist for autocomplete
+    const datalist = document.getElementById("cities");
+    cities.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      datalist.appendChild(option);
+    });
+
+    document.getElementById("searchForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const from = document.getElementById("fromCity").value.toLowerCase().trim();
+      const to = document.getElementById("toCity").value.toLowerCase().trim();
+      const resultList = document.getElementById("results");
+      resultList.innerHTML = "Loading...";
+
+      const busRef = ref(db, "buses");
+      onValue(busRef, (snapshot) => {
+        resultList.innerHTML = "";
+        let found = false;
+
+        snapshot.forEach((child) => {
+          const data = child.val();
+          const dbFrom = (data.From_city || "").toLowerCase();
+          const dbTo = (data.To_city || "").toLowerCase();
+
+          if (dbFrom.includes(from) && dbTo.includes(to)) {
+            found = true;
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <strong>${data.From_city} → ${data.To_city}</strong><br/>
+              Time: ${data.Time} | Fare: ${data.Fare}<br/>
+              Company: ${data.Company} | Mobile: ${data.Mobile}
+            `;
+            resultList.appendChild(li);
           }
+        });
+
+        if (!found) {
+          resultList.innerHTML = "<li>No matching buses found.</li>";
         }
       });
-
-      function closeAllLists(elmnt) {
-        let items = document.getElementsByClassName("autocomplete-items");
-        for (let i = 0; i < items.length; i++) {
-          if (elmnt != items[i] && elmnt != input) {
-            items[i].parentNode.removeChild(items[i]);
-          }
-        }
-      }
-
-      document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
-      });
-    }
-
-    autocomplete(document.getElementById("fromCity"), cities);
-    autocomplete(document.getElementById("toCity"), cities);
-  </script></body>
+    });
+  </script>
+</body>
 </html>
