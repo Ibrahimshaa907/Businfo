@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Buses</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #results {
+      margin-top: 30px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .bus-card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 5px solid #007bff;
+      border-radius: 4px;
+    }
+    .no-result {
+      text-align: center;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Search Bus Info</h2>
+  <form id="searchForm">
+    <label for="fromCity">From City</label>
+    <input type="text" id="fromCity" placeholder="e.g., Lahore" required>
+
+    <label for="toCity">To City</label>
+    <input type="text" id="toCity" placeholder="e.g., Karachi" required>
+
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.appspot.com",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const form = document.getElementById('searchForm');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const from = document.getElementById('fromCity').value.trim().toLowerCase();
+      const to = document.getElementById('toCity').value.trim().toLowerCase();
+
+      resultsDiv.innerHTML = "<p>🔍 Searching...</p>";
+
+      try {
+        const snapshot = await get(child(ref(db), 'buses'));
+        const data = snapshot.val();
+        resultsDiv.innerHTML = '';
+
+        if (data) {
+          let found = false;
+
+          Object.values(data).forEach(bus => {
+            if (
+              bus.From_city?.toLowerCase() === from &&
+              bus.To_city?.toLowerCase() === to
+            ) {
+              found = true;
+              resultsDiv.innerHTML += `
+                <div class="bus-card">
+                  <strong>Company:</strong> ${bus.Company}<br>
+                  <strong>Time:</strong> ${bus.Time}<br>
+                  <strong>Distance:</strong> ${bus.Distance}<br>
+                  <strong>Fare:</strong> ${bus.Fare}<br>
+                  <strong>Stops:</strong> ${bus.Stops}<br>
+                  <strong>Mobile:</strong> ${bus.Mobile}
+                </div>
+              `;
+            }
+          });
+
+          if (!found) {
+            resultsDiv.innerHTML = "<p class='no-result'>No buses found for this route.</p>";
+          }
+        } else {
+          resultsDiv.innerHTML = "<p class='no-result'>No bus data available.</p>";
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = "<p class='no-result'>❌ Error: " + error.message + "</p>";
+      }
+    });
+  </script>
+</body>
+</html>
