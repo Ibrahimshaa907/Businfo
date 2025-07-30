@@ -1,34 +1,29 @@
-body {
-  font-family: sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-.search-box {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-select, button {
-  padding: 8px;
-  font-size: 16px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-}
-th {
-  background: #eee;
-}
+<style>
+  .footer-links {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    font-size: 14px;
+    background-color: #f8fafc; /* Light background */
+    padding: 12px 0;
+    color: #1e293b; /* Neutral dark */
+    border-top: 1px solid #e2e8f0; /* subtle line */
+  }
+  .footer-links a {
+    text-decoration: none;
+    color: #1e40af; /* Dark blue */
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+    font-weight: 500;
+  }
+  .footer-links a i {
+    margin-right: 6px;
+    font-size: 16px;
+    color: #475569; /* Dim icon tone */
+  }
+  .footer-links a:hover {
+    color: #4f46e5; /* Indigo hover */
+  }
+</style>
