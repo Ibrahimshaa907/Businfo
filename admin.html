@@ -53,7 +53,29 @@
     }
   </style>
 </head>
+
 <body>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+    authDomain: "genbusstand.firebaseapp.com",
+    projectId: "genbusstand",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      // not logged in, redirect to login
+      window.location.href = "login.html";
+    }
+  });
+</script>
+
 
   <form id="busForm">
     <h2>Add New Bus</h2>
