@@ -1,4 +1,60 @@
-<h2>Welcome to General Bus Stand</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>General Bus Stand</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .card {
+      width: 200px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: black;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to General Bus Stand</h1>
+  
+  <div class="button-container">
+    <a href="admin.html" class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Admin Icon">
+      <div>Admin Panel</div>
+    </a>
 
-<a href="admin.html">➕ Add New Bus (Admin)</a><br>
-<a href="search.html">🔍 Search Buses</a>
+    <a href="search.html" class="card">
+      <img src="https://cdn-icons-png.flaticon.com/512/751/751381.png" alt="Search Icon">
+      <div>Go to Search</div>
+    </a>
+  </div>
+</body>
+</html>
