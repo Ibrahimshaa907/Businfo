@@ -1,19 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Login</title>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f0f4f8;
+    }
+    h2 {
+      color: #2a4365;
+    }
+    input, button, a {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+    }
+    .back-btn {
+      background-color: #718096;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      margin-top: 20px;
+    }
+    .back-btn:hover {
+      background-color: #4a5568;
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <form id="loginForm">
-    <input type="email" id="email" placeholder="Email" required><br><br>
-    <input type="password" id="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-  </form>
-  <p id="message"></p>
-  <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+  <h2>Admin Login</h2>
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button id="loginBtn">Login</button>
 
-  <!-- Firebase Auth -->
+  <p>Don't have an account? <a href="signup.html">Signup</a></p>
+  <a class="back-btn" href="index.html">← Back to Home</a>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -22,13 +48,15 @@
       apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
       authDomain: "genbusstand.firebaseapp.com",
       projectId: "genbusstand",
+      storageBucket: "genbusstand.appspot.com",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-      e.preventDefault();
+    document.getElementById("loginBtn").addEventListener("click", () => {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
@@ -37,7 +65,7 @@
           window.location.href = "admin.html";
         })
         .catch((error) => {
-          document.getElementById("message").innerText = "Login failed: " + error.message;
+          alert("Login failed: " + error.message);
         });
     });
   </script>
