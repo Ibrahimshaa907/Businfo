@@ -1,119 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Admin - Add Bus</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 30px;
-      background-color: #f4f4f4;
-    }
-    form {
-      background: #fff;
       padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #f9f9f9;
     }
     h2 {
-      text-align: center;
-      margin-bottom: 20px;
+      color: #2a4365;
     }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
+    input, button {
       padding: 10px;
-      margin-top: 5px;
-      box-sizing: border-box;
-    }
-    button {
+      margin: 5px 0;
       width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      background-color: #007bff;
+    }
+    .logout {
+      float: right;
+      margin-top: -50px;
+      background: #e53e3e;
       color: white;
-      font-size: 16px;
       border: none;
-      border-radius: 4px;
+      padding: 8px 16px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #message {
-      text-align: center;
-      font-weight: bold;
-      margin-top: 15px;
+    .logout:hover {
+      background: #c53030;
     }
   </style>
 </head>
-
 <body>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
-    authDomain: "genbusstand.firebaseapp.com",
-    projectId: "genbusstand",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      // not logged in, redirect to login
-      window.location.href = "login.html";
-    }
-  });
-</script>
-
-
+  <button class="logout" id="logoutBtn">Logout</button>
+  <h2>Add New Bus</h2>
   <form id="busForm">
-    <h2>Add New Bus</h2>
-
-    <label for="From_city">From City</label>
-    <input name="From_city" id="From_city" required>
-
-    <label for="To_city">To City</label>
-    <input name="To_city" id="To_city" required>
-
-    <label for="Time">Time</label>
-    <input name="Time" id="Time" required>
-
-    <label for="Distance">Distance</label>
-    <input name="Distance" id="Distance" required>
-
-    <label for="Company">Company</label>
-    <input name="Company" id="Company" required>
-
-    <label for="Fare">Fare</label>
-    <input name="Fare" id="Fare" required>
-
-    <label for="Stops">Stops</label>
-    <input name="Stops" id="Stops" required>
-
-    <label for="Mobile">Mobile</label>
-    <input name="Mobile" id="Mobile" required>
-
-    <button type="submit">Save to Firebase</button>
-    <p id="message"></p>
+    <input name="From_city" placeholder="From City" required><br>
+    <input name="To_city" placeholder="To City" required><br>
+    <input name="Time" placeholder="Time" required><br>
+    <input name="Distance" placeholder="Distance" required><br>
+    <input name="Company" placeholder="Company" required><br>
+    <input name="Fare" placeholder="Fare" required><br>
+    <input name="Stops" placeholder="Stops" required><br>
+    <input name="Mobile" placeholder="Mobile" required><br>
+    <button type="submit">Submit</button>
   </form>
 
+  <!-- Firebase -->
   <script type="module">
-    // Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
       authDomain: "genbusstand.firebaseapp.com",
@@ -124,17 +62,28 @@
       appId: "1:1052804508829:web:775f81c7855860c575b874"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
 
-    // Form handling
-    const form = document.getElementById('busForm');
-    const messageEl = document.getElementById('message');
+    // 🔐 Redirect if not signed in
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
 
-    form.addEventListener('submit', async (e) => {
+    // 🚪 Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    // ✅ Save Bus Data
+    document.getElementById('busForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
+      const form = e.target;
       const bus = {
         From_city: form.From_city.value,
         To_city: form.To_city.value,
@@ -145,16 +94,12 @@
         Stops: form.Stops.value,
         Mobile: form.Mobile.value
       };
-
       try {
-        const newRef = push(ref(db, 'buses'));
-        await set(newRef, bus);
-        messageEl.style.color = "green";
-        messageEl.textContent = "✅ Bus data added successfully!";
+        await push(ref(db, 'buses'), bus);
+        alert('Bus data added successfully!');
         form.reset();
       } catch (error) {
-        messageEl.style.color = "red";
-        messageEl.textContent = "❌ Error: " + error.message;
+        alert('Error: ' + error.message);
       }
     });
   </script>
