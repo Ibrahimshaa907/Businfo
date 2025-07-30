@@ -1,94 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>General Bus Stand</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font Awesome (for icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Optional: Main style -->
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #f2f2f2;
-      text-align: center;
-      padding: 50px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px; /* space for footer */
+      background-color: #f9fafb;
     }
+
     h1 {
-      margin-bottom: 30px;
-      color: #333;
+      text-align: center;
+      margin-top: 40px;
+      color: #1f2937;
     }
-    .button-container {
+
+    .link-buttons {
       display: flex;
       justify-content: center;
-      gap: 40px;
+      gap: 20px;
+      margin-top: 30px;
       flex-wrap: wrap;
     }
-    .card {
-      width: 200px;
-      padding: 20px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
-      cursor: pointer;
+
+    .link-buttons a {
       text-decoration: none;
-      color: black;
+      background-color: #3b82f6;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
     }
-    .card:hover {
-      transform: scale(1.05);
+
+    .link-buttons a:hover {
+      background-color: #2563eb;
     }
-    .card img {
-      width: 100px;
-      height: 100px;
-      margin-bottom: 15px;
+
+    /* Footer styling */
+    .footer-links {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 12px;
+      font-size: 14px;
+      border-top: 1px solid #e2e8f0;
+      z-index: 100;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a i {
+      margin-right: 6px;
+      color: #475569;
+    }
+
+    .footer-links a:hover {
+      color: #4f46e5;
     }
   </style>
 </head>
 <body>
+
   <h1>Welcome to General Bus Stand</h1>
-  
-  <div class="button-container">
-    <a href="admin.html" class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Admin Icon">
-      <div>Admin Panel</div>
-    </a>
 
-    <a href="search.html" class="card">
-      <img src="https://cdn-icons-png.flaticon.com/512/751/751381.png" alt="Search Icon">
-      <div>Go to Search</div>
-    </a>
+  <div class="link-buttons">
+    <a href="admin.html">🛠 Admin Panel</a>
+    <a href="search.html">🔍 Search Buses</a>
   </div>
-  <!-- Footer Start -->
-<footer style="background-color:#f8f8f8; padding: 15px 10px; position: fixed; bottom: 0; width: 100%; text-align: center; border-top: 1px solid #ccc;">
-  <style>
-    .footer-links {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      font-size: 14px;
-    }
-    .footer-links a {
-      text-decoration: none;
-      color: #333;
-      margin: 8px;
-      display: flex;
-      align-items: center;
-    }
-    .footer-links a i {
-      margin-right: 5px;
-    }
-  </style>
 
-  <!-- Font Awesome (for icons) -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
+  <!-- Footer Links -->
   <div class="footer-links">
+    <a href="contact.html"><i class="fas fa-phone"></i>Contact</a>
+    <a href="privacy.html"><i class="fas fa-lock"></i>Privacy</a>
+    <a href="disclaimer.html"><i class="fas fa-exclamation-circle"></i>Disclaimer</a>
     <a href="about.html"><i class="fas fa-info-circle"></i>About Us</a>
-    <a href="privacy.html"><i class="fas fa-user-secret"></i>Privacy</a>
-    <a href="disclaimer.html"><i class="fas fa-exclamation-triangle"></i>Disclaimer</a>
-    <a href="terms.html"><i class="fas fa-file-alt"></i>Terms</a>
-    <a href="contact.html"><i class="fas fa-envelope"></i>Contact</a>
+    <a href="terms.html"><i class="fas fa-file-contract"></i>Terms</a>
   </div>
-</footer>
-<!-- Footer End -->
 
 </body>
 </html>
