@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Signup</title>
+</head>
+<body>
+  <h2>Signup</h2>
+  <form id="signupForm">
+    <input type="email" id="email" placeholder="Email" required><br><br>
+    <input type="password" id="password" placeholder="Password" required><br><br>
+    <button type="submit">Signup</button>
+  </form>
+  <p id="message"></p>
+  <p>Already have an account? <a href="login.html">Login here</a></p>
+
+  <!-- Firebase Auth -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      projectId: "genbusstand",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("signupForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          document.getElementById("message").innerText = "Signup successful! You can now log in.";
+        })
+        .catch((error) => {
+          document.getElementById("message").innerText = "Signup failed: " + error.message;
+        });
+    });
+  </script>
+</body>
+</html>
