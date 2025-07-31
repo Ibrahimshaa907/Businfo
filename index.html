@@ -25,36 +25,138 @@
     .autocomplete-items div:hover {
       background-color: #e9e9e9;
     }
+    /* Ad Styling */
+    .ad-container {
+      margin: 20px auto;
+      padding: 15px;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      text-align: center;
+      max-width: 600px;
+    }
+    .sidebar-ad {
+      margin-top: 20px;
+      padding: 10px;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      text-align: center;
+    }
+    .direct-link-button {
+      padding: 12px 25px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .direct-link-button:hover {
+      background: #f57c00;
+    }
+    h3 {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .home-header {
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      padding: 30px 0;
+    }
+    .home-footer {
+      background: #343a40;
+      padding: 20px 0;
+    }
+    .footer-links a {
+      color: #adb5bd;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .footer-links a:hover {
+      color: #ffffff;
+    }
   </style>
 </head>
 <body class="bg-light">
 
-  <header class="home-header text-center text-white p-4 bg-primary">
-    <h1>General Bus Stand</h1>
-    <p>Find buses across Pakistan easily</p>
+  <header class="home-header text-center text-white p-4">
+    <h1 class="display-4">General Bus Stand</h1>
+    <p class="lead">Find buses across Pakistan easily</p>
   </header>
 
-  <!-- ✅ Search Form -->
   <div class="container mt-4">
-    <h2 class="text-center mb-4">Search Buses</h2>
-    <form id="searchForm" class="row g-3 autocomplete">
-      <div class="col-md-6 position-relative">
-        <label for="fromCity" class="form-label">From City</label>
-        <input type="text" id="fromCity" name="fromCity" class="form-control" required autocomplete="off" />
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-md-8">
+        <!-- Search Form -->
+        <h2 class="text-center mb-4 text-primary">Search Buses</h2>
+        <form id="searchForm" class="row g-3 autocomplete">
+          <div class="col-md-6 position-relative">
+            <label for="fromCity" class="form-label">From City</label>
+            <input type="text" id="fromCity" name="fromCity" class="form-control" required autocomplete="off" />
+          </div>
+          <div class="col-md-6 position-relative">
+            <label for="toCity" class="form-label">To City</label>
+            <input type="text" id="toCity" name="toCity" class="form-control" required autocomplete="off" />
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100" style="background-color: #007bff;">Search</button>
+          </div>
+        </form>
+
+        <!-- Ad 1: Native Banner (Fixed to show 1 ad) -->
+        <div class="ad-container mt-4">
+          <h3>Native Banner Ad</h3>
+          <script async="async" data-cfasync="false" src="//pl27300987.profitableratecpm.com/5de0cfa05413d893e8af3d0f7aacc455/invoke.js"></script>
+          <div id="container-5de0cfa05413d893e8af3d0f7aacc455"></div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="results" class="mt-5"></div>
+
+        <!-- Ad 3: Direct Link -->
+        <div class="ad-container mt-4 mb-4">
+          <h3>Direct Link Ad</h3>
+          <a href="https://www.profitableratecpm.com/kxgzw6gh0r?key=83744e36fd644cb3024dd9bacdb2c220" target="_blank" class="direct-link-button">
+            🔥 Visit Offer
+          </a>
+        </div>
       </div>
-      <div class="col-md-6 position-relative">
-        <label for="toCity" class="form-label">To City</label>
-        <input type="text" id="toCity" name="toCity" class="form-control" required autocomplete="off" />
+
+      <!-- Sidebar for Banner Ad -->
+      <div class="col-md-4">
+        <!-- Ad 1: 160x300 Banner -->
+        <div class="sidebar-ad">
+          <h3>160x300 Banner Ad</h3>
+          <script type="text/javascript">
+            atOptions = {
+              'key': 'adb588d6a37f012e254392047e1118bf',
+              'format': 'iframe',
+              'height': 300,
+              'width': 160,
+              'params': {}
+            };
+          </script>
+          <script type="text/javascript" src="//www.highperformanceformat.com/adb588d6a37f012e254392047e1118bf/invoke.js"></script>
+        </div>
       </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-success w-100">Search</button>
-      </div>
-    </form>
-    <div id="results" class="mt-5"></div>
+    </div>
   </div>
 
-  <!-- ✅ Footer Links -->
-  <footer class="home-footer bg-dark text-white text-center mt-5 p-3">
+  <!-- Ad 4: Popunder (Optional - Test Separately) -->
+  <!-- <script type='text/javascript' src='//pl27300950.profitableratecpm.com/67/3c/72/673c72207b8800c76236c53337b3b898.js'></script> -->
+
+  <!-- Ad 5: Social Bar (Optional - Test Separately) -->
+  <!-- <script type='text/javascript' src='//pl27300328.profitableratecpm.com/06/51/e2/0651e26db36f31220888414cb5888fcb.js'></script> -->
+
+  <!-- Footer Links -->
+  <footer class="home-footer text-center text-white mt-5 p-3">
     <div class="footer-links mb-2">
       <a href="about.html">About Us</a> |
       <a href="contact.html">Contact</a> |
@@ -63,10 +165,10 @@
       <a href="terms.html">Terms & Conditions</a> |
       <a href="admin.html">Go to Admin Panel</a>
     </div>
-    <p>&copy; 2025 GeneralBusStand</p>
+    <p>&copy; 2025 GeneralBusStand | Time: 12:50 PM PKT, Jul 31, 2025</p>
   </footer>
 
-  <!-- ✅ Firebase + Search Logic -->
+  <!-- Firebase + Search Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
