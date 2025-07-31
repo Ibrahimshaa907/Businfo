@@ -32,12 +32,40 @@ body {
   border: none;
 }
 
+.quick-links {
+  text-align: center;
+  padding: 20px;
+}
+
+.quick-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quick-links li {
+  margin: 10px 0;
+}
+
+.quick-links a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer-links {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.footer-links a {
+  color: white;
+  margin: 0 8px;
+  text-decoration: none;
+}
+
 .home-footer {
   background-color: #333;
   color: white;
-  text-align: center;
   padding: 15px;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
+  text-align: center;
+  margin-top: 40px;
 }
