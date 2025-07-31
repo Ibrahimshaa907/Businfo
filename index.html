@@ -1,44 +1,172 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>General Bus Stand - Home</title>
-  <link rel="stylesheet" href="css/style-home.css">
-</head>
-<body>
 
-  <header class="home-header">
-    <h1>Welcome to General Bus Stand</h1>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style-home.css" />
+
+  <style>
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #ccc;
+      z-index: 99;
+      background: white;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <header class="home-header text-center text-white p-4 bg-primary">
+    <h1>General Bus Stand</h1>
+    <p>Find buses across Pakistan easily</p>
   </header>
 
-  <section class="home-search">
-    <form>
-      <input type="text" placeholder="From City">
-      <input type="text" placeholder="To City">
-      <button type="submit">Search</button>
+  <!-- ✅ Search Form -->
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">Search Buses</h2>
+    <form id="searchForm" class="row g-3 autocomplete">
+      <div class="col-md-6 position-relative">
+        <label for="fromCity" class="form-label">From City</label>
+        <input type="text" id="fromCity" name="fromCity" class="form-control" required autocomplete="off" />
+      </div>
+      <div class="col-md-6 position-relative">
+        <label for="toCity" class="form-label">To City</label>
+        <input type="text" id="toCity" name="toCity" class="form-control" required autocomplete="off" />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-success w-100">Search</button>
+      </div>
     </form>
-  </section>
+    <div id="results" class="mt-5"></div>
+  </div>
 
-  <section class="quick-links">
-    <h2>Quick Access</h2>
-    <ul>
-      <li><a href="admin.html">Go to Admin Panel</a></li>
-      <li><a href="search.html">Search Buses</a></li>
-    </ul>
-  </section>
-
-  <footer class="home-footer">
-    <div class="footer-links">
+  <!-- ✅ Footer Links -->
+  <footer class="home-footer bg-dark text-white text-center mt-5 p-3">
+    <div class="footer-links mb-2">
       <a href="about.html">About Us</a> |
       <a href="contact.html">Contact</a> |
       <a href="privacy.html">Privacy Policy</a> |
       <a href="disclaimer.html">Disclaimer</a> |
-      <a href="terms.html">Terms & Conditions</a>
+      <a href="terms.html">Terms & Conditions</a> |
+      <a href="admin.html">Go to Admin Panel</a>
     </div>
     <p>&copy; 2025 GeneralBusStand</p>
   </footer>
+
+  <!-- ✅ Firebase + Search Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.appspot.com",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const dbRef = ref(getDatabase(app));
+
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const from = document.getElementById('fromCity').value.toLowerCase();
+      const to = document.getElementById('toCity').value.toLowerCase();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "<p class='text-center'>Searching...</p>";
+
+      try {
+        const snapshot = await get(child(dbRef, 'buses'));
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const filtered = Object.values(data).filter(bus =>
+            bus.From_city.toLowerCase().includes(from) &&
+            bus.To_city.toLowerCase().includes(to)
+          );
+
+          if (filtered.length === 0) {
+            resultsDiv.innerHTML = "<p class='text-center text-danger'>No results found.</p>";
+          } else {
+            resultsDiv.innerHTML = filtered.map(bus => `
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">${bus.From_city} ➝ ${bus.To_city}</h5>
+                  <p class="card-text">Time: ${bus.Time}<br>
+                  Distance: ${bus.Distance}<br>
+                  Company: ${bus.Company}<br>
+                  Fare: ${bus.Fare}<br>
+                  Stops: ${bus.Stops}<br>
+                  Mobile: ${bus.Mobile}</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        } else {
+          resultsDiv.innerHTML = "<p class='text-center text-danger'>No data found.</p>";
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = `<p class='text-center text-danger'>Error: ${error.message}</p>`;
+      }
+    });
+
+    // Autocomplete Setup
+    const cities = ["Abbottabad", "Ahmedpur East", "Ali Pur", "Arifwala", "Attock", "Bahawalnagar", "Bahawalpur", "Bannu", "Basirpur", "Batkhela", "Bhalwal", "Bhakkar", "Bhawana", "Bhera", "Burewala", "Chakwal", "Chiniot", "Dadu", "Daska", "Dera Ghazi Khan", "Dera Ismail Khan", "Faisalabad", "Gojra", "Gujranwala", "Gujrat", "Hafizabad", "Haripur", "Hyderabad", "Islamabad", "Jacobabad", "Jhang", "Jhelum", "Kamalia", "Karachi", "Kasur", "Khanewal", "Khanpur", "Khushab", "Kot Addu", "Lahore", "Lalamusa", "Larkana", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mirpur Khas", "Multan", "Muzaffarabad", "Muzaffargarh", "Nankana Sahib", "Narowal", "Nawabshah", "Okara", "Peshawar", "Quetta", "Rahim Yar Khan", "Rawalpindi", "Sadiqabad", "Sahiwal", "Sargodha", "Sheikhupura", "Sialkot", "Sukkur", "Swabi", "Swat", "Toba Tek Singh", "Vehari", "Wah Cantt"];
+
+    function setupAutocomplete(inputId) {
+      const input = document.getElementById(inputId);
+      input.addEventListener("input", function () {
+        closeAllLists();
+        const val = this.value;
+        if (!val) return false;
+        const list = document.createElement("div");
+        list.setAttribute("id", this.id + "-autocomplete-list");
+        list.setAttribute("class", "autocomplete-items");
+        this.parentNode.appendChild(list);
+
+        cities.filter(city => city.toLowerCase().startsWith(val.toLowerCase())).forEach(city => {
+          const item = document.createElement("div");
+          item.innerHTML = "<strong>" + city.substr(0, val.length) + "</strong>" + city.substr(val.length);
+          item.addEventListener("click", function () {
+            input.value = city;
+            closeAllLists();
+          });
+          list.appendChild(item);
+        });
+      });
+
+      function closeAllLists(elmnt) {
+        const items = document.getElementsByClassName("autocomplete-items");
+        for (let i = 0; i < items.length; i++) {
+          if (elmnt != items[i] && elmnt != input) {
+            items[i].parentNode.removeChild(items[i]);
+          }
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+      });
+    }
+
+    setupAutocomplete("fromCity");
+    setupAutocomplete("toCity");
+  </script>
 
 </body>
 </html>
