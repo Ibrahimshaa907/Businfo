@@ -1,0 +1,43 @@
+/* css/style-home.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.home-header {
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.home-search {
+  padding: 30px;
+  text-align: center;
+}
+
+.home-search input {
+  padding: 10px;
+  margin: 5px;
+  width: 150px;
+}
+
+.home-search button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+}
+
+.home-footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
