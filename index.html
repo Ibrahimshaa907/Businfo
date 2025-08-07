@@ -1,81 +1,286 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bus Stand Info</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>General Bus Stand - Home</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style-home.css" />
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #ccc;
+      z-index: 99;
+      background: white;
+      max-height: 200px;
+      overflow-y: auto;
     }
-    .search-section input,
-    .search-section button {
-      margin: 5px 0;
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
     }
-    @media (max-width: 768px) {
-      .search-section input,
-      .search-section button {
-        width: 100% !important;
-      }
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9;
+    }
+    .direct-link-button {
+      padding: 12px 25px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .direct-link-button:hover {
+      background: #f57c00;
+    }
+    h3 {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .home-header {
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      padding: 30px 0;
+    }
+    .home-footer {
+      background: #343a40;
+      padding: 20px 0;
+    }
+    .footer-links a {
+      color: #adb5bd;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .footer-links a:hover {
+      color: #ffffff;
     }
   </style>
-</head><body>
-  <!-- Header -->
-  <header class="text-center p-3 bg-primary text-white">
-    <h1>Welcome to General Bus Stand</h1>
-  </header>  <!-- Search form -->  <section class="container mt-4 search-section">
-    <form id="searchForm" class="row g-2">
-      <div class="col-md-6">
-        <input type="text" id="fromCity" class="form-control" placeholder="From City" />
-      </div>
-      <div class="col-md-6">
-        <input type="text" id="toCity" class="form-control" placeholder="To City" />
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-success w-100">Search</button>
-      </div>
-    </form>
-  </section>  <!-- Search Results -->  <section id="results" class="container mt-4"></section>  <!-- Ad Section -->  <div class="container mt-5">
-    <div class="row">
-      <div class="col-12 text-center" id="ad-section">
-        <h2>Sponsored Ad</h2>
-        <!-- Adsterra banner code or Google AdSense -->
-        <script type="text/javascript" src="https://www.topcreativeformat.com/aW1oZmJubm1vZ3gyZ3ZsZ3Y.js"></script>
-      </div>
-    </div>
-  </div>  <!-- Footer -->  <footer class="bg-light text-center p-3 mt-5">
-    <p>&copy; 2025 General Bus Stand. All rights reserved.</p>
-    <div>
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/about.html">About</a> |
-      <a href="/terms.html">Terms</a> |
-      <a href="/disclaimer.html">Disclaimer</a> |
-      <a href="/contact.html">Contact</a>
-    </div>
-  </footer>  <!-- Firebase & Script -->  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>  <script src="script.js"></script>  <!-- Autocomplete Cities -->  <script>
-    const cities = ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Multan", "Faisalabad", "Peshawar", "Quetta", "Gujranwala", "Sialkot", "Bahawalpur"];
+</head>
+<body class="bg-light">
 
-    function autocomplete(input) {
+  <header class="home-header text-center text-white p-4">
+    <h1 class="display-4">General Bus Stand</h1>
+    <p class="lead">Find buses across Pakistan easily</p>
+  </header>
+
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-md-8">
+        <!-- Search Form -->
+        <h2 class="text-center mb-4 text-primary">Search Buses</h2>
+        <form id="searchForm" class="row g-3 autocomplete">
+          <div class="col-md-6 position-relative">
+            <label for="fromCity" class="form-label">From City</label>
+            <input type="text" id="fromCity" name="fromCity" class="form-control" required autocomplete="off" />
+          </div>
+          <div class="col-md-6 position-relative">
+            <label for="toCity" class="form-label">To City</label>
+            <input type="text" id="toCity" name="toCity" class="form-control" required autocomplete="off" />
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100" style="background-color: #007bff;">Search</button>
+          </div>
+        </form>
+
+        <!-- Search Results -->
+        <div id="results" class="mt-5"></div>
+      </div>
+
+      <!-- Sidebar Ads -->
+      <div class="col-md-4">
+        <!-- Ad 1 -->
+        <div class="text-center p-3 border rounded bg-white mt-4">
+          <h3>🔥 Hot Deal</h3>
+          <a href="https://www.profitableratecpm.com/kxgzw6gh0r?key=83744e36fd644cb3024dd9bacdb2c220" target="_blank" class="direct-link-button">
+            🔥 Visit Offer
+          </a>
+        </div>
+
+        <!-- Ad 2 -->
+        <div class="text-center p-3 border rounded bg-white mt-4">
+          <h3>🚍 Bus Deals</h3>
+          <a href="https://softballabnegatemailman.com/ptmjctig7?key=6b17b7122638e98272085bcfc97d693b" target="_blank" class="direct-link-button">
+            🚍 Get Best Bus Deals
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="home-footer text-center text-white mt-5 p-3">
+    <div class="footer-links mb-2">
+      <a href="about.html">About Us</a> |
+      <a href="contact.html">Contact</a> |
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="disclaimer.html">Disclaimer</a> |
+      <a href="terms.html">Terms & Conditions</a> |
+      <a href="admin.html">Go to Admin Panel</a>
+    </div>
+    <p>&copy; 2025 GeneralBusStand</p>
+  </footer>
+
+  <!-- Adsterra Script -->
+  <script type='text/javascript' src='//softballabnegatemailman.com/cd/10/f5/cd10f5325cd3d95d1d691a3c97d55708.js'></script>
+
+  <!-- Location Auto-fill -->
+  <script>
+    window.addEventListener('load', () => {
+      const fromInput = document.getElementById('fromCity');
+      const locationMsg = document.createElement('p');
+      locationMsg.className = 'text-muted small text-center';
+      locationMsg.innerText = '📍 Allow location access to auto-fill your city';
+      fromInput.parentNode.appendChild(locationMsg);
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          try {
+            const res = await fetch(https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en);
+            const data = await res.json();
+            const city = data.city || data.locality || data.principalSubdivision;
+            if (city) {
+              fromInput.value = city;
+              locationMsg.innerText = 📍 Detected city: ${city};
+            } else {
+              locationMsg.innerText = '📍 City not found';
+            }
+          } catch {
+            locationMsg.innerText = '📍 Failed to detect city';
+          }
+        }, () => {
+          locationMsg.innerText = '📍 Location access denied';
+        });
+      } else {
+        locationMsg.innerText = '📍 Your browser does not support location';
+      }
+    });
+  </script>
+
+  <!-- Firebase + Search + Dynamic Autocomplete -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_wiVIk8FK4ZWq6UfZiBWZQMAifKykMnA",
+      authDomain: "genbusstand.firebaseapp.com",
+      databaseURL: "https://genbusstand-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "genbusstand",
+      storageBucket: "genbusstand.appspot.com",
+      messagingSenderId: "1052804508829",
+      appId: "1:1052804508829:web:775f81c7855860c575b874"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const dbRef = ref(getDatabase(app));
+
+    let cities = [];
+
+    // Fetch buses + dynamic city list
+    get(child(dbRef, 'buses')).then(snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const citiesSet = new Set();
+        Object.values(data).forEach(bus => {
+          if (bus.From_city) citiesSet.add(bus.From_city);
+          if (bus.To_city) citiesSet.add(bus.To_city);
+        });
+        cities = Array.from(citiesSet).sort();
+        setupAutocomplete("fromCity");
+        setupAutocomplete("toCity");
+      }
+    });
+
+    // Search logic
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const from = document.getElementById('fromCity').value.toLowerCase();
+      const to = document.getElementById('toCity').value.toLowerCase();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "<p class='text-center'>Searching...</p>";
+
+      try {
+        const snapshot = await get(child(dbRef, 'buses'));
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const filtered = Object.values(data).filter(bus =>
+            bus.From_city.toLowerCase().includes(from) &&
+            bus.To_city.toLowerCase().includes(to)
+          );
+
+          if (filtered.length === 0) {
+            resultsDiv.innerHTML = "<p class='text-center text-danger'>No results found.</p>";
+          } else {
+            resultsDiv.innerHTML = filtered.map(bus => 
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">${bus.From_city} ➝ ${bus.To_city}</h5>
+                  <p class="card-text">Time: ${bus.Time}<br>
+                  Distance: ${bus.Distance}<br>
+                  Company: ${bus.Company}<br>
+                  Fare: ${bus.Fare}<br>
+                  Stops: ${bus.Stops}<br>
+                  Mobile: ${bus.Mobile}</p>
+                </div>
+              </div>
+            ).join('');
+          }
+        } else {
+          resultsDiv.innerHTML = "<p class='text-center text-danger'>No data found.</p>";
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = <p class='text-center text-danger'>Error: ${error.message}</p>;
+      }
+    });
+
+    function setupAutocomplete(inputId) {
+      const input = document.getElementById(inputId);
       input.addEventListener("input", function () {
-        const list = document.createElement("datalist");
-        list.id = input.id + "-list";
-        list.innerHTML = cities.map(city => `<option value="${city}">`).join("");
-        input.setAttribute("list", list.id);
-        document.body.appendChild(list);
+        closeAllLists();
+        const val = this.value;
+        if (!val) return false;
+        const list = document.createElement("div");
+        list.setAttribute("id", this.id + "-autocomplete-list");
+        list.setAttribute("class", "autocomplete-items");
+        this.parentNode.appendChild(list);
+
+        cities.filter(city => city.toLowerCase().startsWith(val.toLowerCase())).forEach(city => {
+          const item = document.createElement("div");
+          item.innerHTML = "<strong>" + city.substr(0, val.length) + "</strong>" + city.substr(val.length);
+          item.addEventListener("click", function () {
+            input.value = city;
+            closeAllLists();
+          });
+          list.appendChild(item);
+        });
+      });
+
+      function closeAllLists(elmnt) {
+        const items = document.getElementsByClassName("autocomplete-items");
+        for (let i = 0; i < items.length; i++) {
+          if (elmnt != items[i] && elmnt != input) {
+            items[i].parentNode.removeChild(items[i]);
+          }
+        }
+      }
+
+      document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
       });
     }
+  </script>
 
-    autocomplete(document.getElementById("fromCity"));
-    autocomplete(document.getElementById("toCity"));
-  </script>  <!-- Auto-scroll to ad and auto-refresh -->  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        const ad = document.getElementById("ad-section");
-        if (ad) ad.scrollIntoView({ behavior: "smooth" });
-      }, 20000); // 20 seconds
-
-      setTimeout(() => {
-        location.reload();
-      }, 30000); // 30 seconds refresh
-    });
-  </script></body></html>
+</body>
+</html>  
