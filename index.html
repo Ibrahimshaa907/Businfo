@@ -1,73 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bus Stand Info</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .search-section input,
+    .search-section button {
+      margin: 5px 0;
+    }
+    @media (max-width: 768px) {
+      .search-section input,
+      .search-section button {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head><body>
   <!-- Header -->
-  <header>
+  <header class="text-center p-3 bg-primary text-white">
     <h1>Welcome to General Bus Stand</h1>
-  </header>
-
-  <!-- Search form -->
-  <section class="search-section">
-    <form id="searchForm">
-      <input type="text" id="fromCity" placeholder="From City" />
-      <input type="text" id="toCity" placeholder="To City" />
-      <button type="submit">Search</button>
+  </header>  <!-- Search form -->  <section class="container mt-4 search-section">
+    <form id="searchForm" class="row g-2">
+      <div class="col-md-6">
+        <input type="text" id="fromCity" class="form-control" placeholder="From City" />
+      </div>
+      <div class="col-md-6">
+        <input type="text" id="toCity" class="form-control" placeholder="To City" />
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-success w-100">Search</button>
+      </div>
     </form>
-  </section>
-
-  <!-- Search Results -->
-  <section id="results"></section>
-
-  <!-- Ad Section (target for scroll) -->
-  <div class="col-md-4">
-    <h2>Sponsored Ad</h2>
-    <!-- Google AdSense Code or Custom Ad -->
-    <div>
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXX"
-           data-ad-slot="XXXXXXX"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+  </section>  <!-- Search Results -->  <section id="results" class="container mt-4"></section>  <!-- Ad Section -->  <div class="container mt-5">
+    <div class="row">
+      <div class="col-12 text-center" id="ad-section">
+        <h2>Sponsored Ad</h2>
+        <!-- Adsterra banner code or Google AdSense -->
+        <script type="text/javascript" src="https://www.topcreativeformat.com/aW1oZmJubm1vZ3gyZ3ZsZ3Y.js"></script>
+      </div>
     </div>
-  </div>
-
-  <!-- Footer -->
-  <footer>
+  </div>  <!-- Footer -->  <footer class="bg-light text-center p-3 mt-5">
     <p>&copy; 2025 General Bus Stand. All rights reserved.</p>
-  </footer>
+    <div>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/about.html">About</a> |
+      <a href="/terms.html">Terms</a> |
+      <a href="/disclaimer.html">Disclaimer</a> |
+      <a href="/contact.html">Contact</a>
+    </div>
+  </footer>  <!-- Firebase & Script -->  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>  <script src="script.js"></script>  <!-- Autocomplete Cities -->  <script>
+    const cities = ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Multan", "Faisalabad", "Peshawar", "Quetta", "Gujranwala", "Sialkot", "Bahawalpur"];
 
-  <!-- Scripts -->
-  <script src="script.js"></script>
+    function autocomplete(input) {
+      input.addEventListener("input", function () {
+        const list = document.createElement("datalist");
+        list.id = input.id + "-list";
+        list.innerHTML = cities.map(city => `<option value="${city}">`).join("");
+        input.setAttribute("list", list.id);
+        document.body.appendChild(list);
+      });
+    }
 
-  <!-- ✅ Auto-scroll to ad + auto-refresh -->
-  <script>
+    autocomplete(document.getElementById("fromCity"));
+    autocomplete(document.getElementById("toCity"));
+  </script>  <!-- Auto-scroll to ad and auto-refresh -->  <script>
     window.addEventListener("DOMContentLoaded", () => {
-      // Scroll to ad after 3 seconds
       setTimeout(() => {
-        const adSection = document.querySelector(".col-md-4");
-        if (adSection) {
-          adSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 3000);
+        const ad = document.getElementById("ad-section");
+        if (ad) ad.scrollIntoView({ behavior: "smooth" });
+      }, 20000); // 20 seconds
 
-      // Refresh page after 10 seconds
       setTimeout(() => {
         location.reload();
-      }, 10000);
+      }, 30000); // 30 seconds refresh
     });
-  </script>
-
-</body>
-</html>
+  </script></body></html>
